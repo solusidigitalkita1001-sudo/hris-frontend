@@ -14,32 +14,30 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     const newCollapsedState = !isCollapsed;
     setIsCollapsed(newCollapsedState);
-    // Update body attribute for layout adjustments
-    document.body.setAttribute("data-sidebartype", newCollapsedState ? "mini-sidebar" : "full");
+    document.body.setAttribute(
+      "data-sidebartype",
+      newCollapsedState ? "mini-sidebar" : "full"
+    );
   };
 
-  // Handle multilevel menu toggle
   const toggleSubmenu = (menuId, e) => {
     e.preventDefault();
-    setExpandedMenus(prev => ({
+    setExpandedMenus((prev) => ({
       ...prev,
-      [menuId]: !prev[menuId]
+      [menuId]: !prev[menuId],
     }));
   };
 
-  // Handle mini nav item click
   const handleMiniNavClick = (menuId) => {
     setActiveMenu(menuId);
-    setIsCollapsed(false); // Expand sidebar when clicking mini nav
+    setIsCollapsed(false);
     document.body.setAttribute("data-sidebartype", "full");
   };
 
   useEffect(() => {
-    // Get layout type
     const layoutType = document.documentElement.getAttribute("data-layout");
 
     if (layoutType === "vertical") {
-      // Function to find matching element in sidebar nav
       const findMatchingElement = () => {
         const anchors = document.querySelectorAll("#sidebarnav a");
         for (let i = 0; i < anchors.length; i++) {
@@ -50,37 +48,38 @@ const Sidebar = () => {
         return null;
       };
 
-      // Get the matching element and mark it as active
       const matchingElement = findMatchingElement();
       if (matchingElement) {
         matchingElement.classList.add("active");
 
-        // Auto-select the correct menu
         const closestNav = matchingElement.closest("nav[class^=sidebar-nav]");
         const menuid = (closestNav && closestNav.id) || "menu-right-mini-1";
         const menuNumber = menuid[menuid.length - 1];
         setActiveMenu(menuNumber);
 
-        // Show the correct menu and expand sidebar
-        document.getElementById("menu-right-mini-" + menuNumber)?.classList.add("d-block");
-        document.getElementById("mini-" + menuNumber)?.classList.add("selected");
-        setIsCollapsed(false); // Expand sidebar when there's an active menu
+        document
+          .getElementById("menu-right-mini-" + menuNumber)
+          ?.classList.add("d-block");
+        document
+          .getElementById("mini-" + menuNumber)
+          ?.classList.add("selected");
+        setIsCollapsed(false);
       }
 
-      // Expand menus for active sidebar items
-      document.querySelectorAll("ul#sidebarnav ul li a.active").forEach(link => {
-        const submenu = link.closest("ul");
-        if (submenu) {
-          submenu.classList.add("in");
-          const parentLi = submenu.parentElement;
-          if (parentLi) {
-            parentLi.classList.add("selected");
+      document
+        .querySelectorAll("ul#sidebarnav ul li a.active")
+        .forEach((link) => {
+          const submenu = link.closest("ul");
+          if (submenu) {
+            submenu.classList.add("in");
+            const parentLi = submenu.parentElement;
+            if (parentLi) {
+              parentLi.classList.add("selected");
+            }
           }
-        }
-      });
+        });
     }
 
-    // Handle setting href based on the current URL
     const currentURL = window.location.href;
     const miniNavItems = document.querySelectorAll(".mini-nav-item");
 
@@ -92,11 +91,10 @@ const Sidebar = () => {
         sidebarMenu.classList.remove("d-block");
         item.classList.remove("selected");
 
-        // Check if current URL matches any link in this menu
         const menuLinks = sidebarMenu.querySelectorAll("a");
         let hasActiveLink = false;
 
-        menuLinks.forEach(link => {
+        menuLinks.forEach((link) => {
           if (link.href === currentURL) {
             hasActiveLink = true;
           }
@@ -106,12 +104,11 @@ const Sidebar = () => {
           sidebarMenu.classList.add("d-block");
           item.classList.add("selected");
           setActiveMenu(menuId);
-          setIsCollapsed(false); // Expand sidebar when there's an active link
+          setIsCollapsed(false);
         }
       }
     });
 
-    // Only load non-conflicting scripts
     const scripts = [
       "src/assets/js/theme/app.init.js",
       "src/assets/js/theme/theme.js",
@@ -126,7 +123,6 @@ const Sidebar = () => {
     });
 
     return () => {
-      // cleanup scripts
       scripts.forEach((src) => {
         const el = document.querySelector(`script[src="${src}"]`);
         if (el) el.remove();
@@ -136,8 +132,7 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Sidebar Start */}
-      <aside className={`side-mini-panel with-vertical ${isCollapsed ? '' : 'show'}`}>
+      <aside className={`side-mini-panel with-vertical ${isCollapsed ? "" : "show"}`}>
         <div className="iconbar">
           <div>
             <div className="mini-nav">
@@ -158,28 +153,28 @@ const Sidebar = () => {
                 </a>
               </div>
               <ul className="mini-nav-ul" data-simplebar="">
-                {/* --------------------------------------------------------------------------------------------------------- */}
                 {/* Dashboards */}
-                {/* --------------------------------------------------------------------------------------------------------- */}
-                <li className={`mini-nav-item ${activeMenu === "1" ? "selected" : ""}`} id="mini-1">
-                  <a
-                    href="#"
-                    data-bs-toggle="tooltip"
-                    data-bs-custom-class="custom-tooltip"
-                    data-bs-placement="right"
-                    data-bs-title="Dashboards"
+                <li className={`mini-nav-item ${ activeMenu === "1" ? "selected" : "" }`} id="mini-1">
+                  <a href="#" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="right" data-bs-title="Dashboards"
                     onClick={(e) => {
                       e.preventDefault();
                       handleMiniNavClick("1");
                     }}
                   >
-                    <iconify-icon
-                      icon="solar:layers-line-duotone"
-                      className="fs-7"
-                    />
+                    <iconify-icon icon="solar:layers-line-duotone" className="fs-7"/>
                   </a>
                 </li>
 
+                {/* Role & Permission */}
+                <li className={`mini-nav-item ${ activeMenu === "2" ? "selected" : "" }`} id="mini-2">
+                  <a href="#" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="right" data-bs-title="Role & Permission"
+                      onClick={(e) => {
+                      e.preventDefault();
+                      handleMiniNavClick("2");
+                    }}>
+                    <iconify-icon icon="solar:settings-linear" className="fs-7"/>
+                  </a>
+                </li>
               </ul>
             </div>
             <div className="sidebarmenu">
@@ -188,24 +183,17 @@ const Sidebar = () => {
                   <img src="./src/assets/images/logos/logo.svg" alt="Logo" />
                 </a>
               </div>
-              {/* ---------------------------------- */}
-              {/* Dashboard */}
-              {/* ---------------------------------- */}
+
+              {/* Dashboard Menu */}
               <nav
                 className={`sidebar-nav ${activeMenu === "1" ? "d-block" : ""}`}
                 id="menu-right-mini-1"
                 data-simplebar=""
               >
                 <ul className="sidebar-menu" id="sidebarnav">
-                  {/* ---------------------------------- */}
-                  {/* Home */}
-                  {/* ---------------------------------- */}
                   <li className="nav-small-cap">
                     <span className="hide-menu">Dashboards</span>
                   </li>
-                  {/* ---------------------------------- */}
-                  {/* Dashboard */}
-                  {/* ---------------------------------- */}
                   <li className="sidebar-item">
                     <Link
                       className={`sidebar-link ${isActive("/dashboard")}`}
@@ -216,7 +204,7 @@ const Sidebar = () => {
                       <span className="hide-menu">Dashboard</span>
                     </Link>
                   </li>
-                  <li className="sidebar-item">
+                  {/* <li className="sidebar-item">
                     <a
                       className={`sidebar-link ${isActive("/dashboard_1")}`}
                       href="#"
@@ -310,15 +298,74 @@ const Sidebar = () => {
                         </a>
                       </li>
                     </ul>
+                  </li> */}
+                  <li>
+                    <span className="sidebar-divider" />
+                  </li>
+                </ul>
+              </nav>
+
+              {/* Role & Permission Menu */}
+              <nav className={`sidebar-nav ${activeMenu === "2" ? "d-block" : ""}`} id="menu-right-mini-2" data-simplebar="">
+                <ul className="sidebar-menu" id="sidebarnav">
+                  <li className="nav-small-cap">
+                    <span className="hide-menu">Settings</span>
+                  </li>
+                  <li className="sidebar-item">
+                    <Link
+                      className={`sidebar-link ${isActive("/users")}`}
+                      to="/users"
+                      aria-expanded="false"
+                    >
+                      <iconify-icon icon="solar:users-group-rounded-bold-duotone" />
+                      <span className="hide-menu">Users</span>
+                    </Link>
+                  </li>
+                  <li className="sidebar-item">
+                    <Link
+                      className={`sidebar-link ${isActive("/role-permission")}`}
+                      to="/role-permission"
+                      aria-expanded="false"
+                    >
+                      <iconify-icon icon="solar:shield-user-line-duotone" />
+                      <span className="hide-menu">Role & Permission</span>
+                    </Link>
+                  </li>
+                  <li className="sidebar-item">
+                    <Link
+                      className={`sidebar-link ${isActive("/office")}`}
+                      to="/office"
+                      aria-expanded="false"
+                    >
+                      <iconify-icon icon="solar:buildings-2-broken" />
+                      <span className="hide-menu">Office</span>
+                    </Link>
+                  </li>
+                  <li className="sidebar-item">
+                    <Link
+                      className={`sidebar-link ${isActive("/division")}`}
+                      to="/division"
+                      aria-expanded="false"
+                    >
+                      <iconify-icon icon="solar:bill-outline" />
+                      <span className="hide-menu">Division</span>
+                    </Link>
+                  </li>
+                  <li className="sidebar-item">
+                    <Link
+                      className={`sidebar-link ${isActive("/department")}`}
+                      to="/department"
+                      aria-expanded="false"
+                    >
+                      <iconify-icon icon="solar:bill-list-outline" />
+                      <span className="hide-menu">Department</span>
+                    </Link>
                   </li>
                   <li>
                     <span className="sidebar-divider" />
                   </li>
-
-
                 </ul>
               </nav>
-
             </div>
           </div>
         </div>
