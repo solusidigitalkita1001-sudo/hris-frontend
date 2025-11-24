@@ -1,35 +1,3 @@
-// // App.jsx
-// import { Routes, Route } from "react-router-dom";
-// import ProtectedRoute from "./components/ProtectedRoute";
-// import MainLayout from "./layouts/MainLayout";
-
-// // Pages
-// import Login from "./pages/Login";
-// import Dashboard from "./pages/Dashboard";
-// import RolePermission from "./pages/RolePermission";
-
-// function App() {
-//   return (
-//     <Routes>
-
-//       {/* LOGIN PAGE - tidak pakai layout */}
-//       <Route path="/login" element={<Login />} />
-
-//       {/* PROTECTED ROUTES */}
-//         <Route element={<MainLayout />}>
-//           <Route path="/dashboard" element={<Dashboard />} />
-//           <Route path="/role-permission" element={<RolePermission />} />
-//         </Route>
-//       {/* <Route element={<ProtectedRoute />}>
-//       </Route> */}
-
-//     </Routes>
-//   );
-// }
-
-// export default App;
-
-// App.jsx lama
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
@@ -39,29 +7,66 @@ import Office from "./pages/settings/Office";
 import Division from "./pages/settings/Division";
 import Department from "./pages/settings/Department";
 import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { authService } from "./utils/auth";
 
 function App() {
   return (
     <Routes>
-      {/* Redirect root ke login */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      {/* Redirect root ke dashboard jika sudah login, atau ke login jika belum */}
+      <Route
+        path="/"
+        element={
+          authService.isAuthenticated() ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
 
       {/* Route tanpa layout (Login) */}
       <Route path="/login" element={<Login />} />
 
-      {/* Route dengan layout - Semua route dalam satu MainLayout */}
-      <Route element={<MainLayout />}>
+      {/* Route dengan layout dan protection */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }
+      >
+        {/* Dashboard - accessible by all authenticated users */}
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/role-permission" element={<RolePermission />} />
+
+        {/* Settings Routes - with specific permissions */}
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute requiredPermission="employee.update">
+              <Users />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/role-permission"
+          element={
+            <ProtectedRoute requiredPermission="role.manage">
+              <RolePermission />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/office" element={<Office />} />
         <Route path="/division" element={<Division />} />
         <Route path="/department" element={<Department />} />
-        {/* Tambah route lain di sini */}
       </Route>
+
+      {/* 404 Page - Optional */}
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }
-
 
 export default App;

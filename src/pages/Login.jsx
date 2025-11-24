@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../utils/auth";
 import api from "../utils/axios";
@@ -12,43 +12,46 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Redirect jika sudah login
+  useEffect(() => {
+    if (authService.isAuthenticated()) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
-      // Gunakan axios instance yang sudah dikonfigurasi
       const response = await api.post("/login", {
         email: email,
         password: password,
         rememberMe: rememberMe,
       });
-      console.log(response);
 
-      // Destructure token dan user dari response
-      const { token, user } = response.data;
+      if (response.data.success) {
+        const { access_token, refresh_token, user } = response.data;
 
-      // Simpan token dan user data menggunakan authService
-      authService.setToken(token);
-      authService.setUser(user);
+        authService.setAccessToken(access_token);
+        authService.setRefreshToken(refresh_token);
+        authService.setUser(user);
 
-      // Navigate to dashboard
-      navigate("/dashboard");
+        navigate("/dashboard");
+      } else {
+        setError(response.data.message || "Login failed. Please try again.");
+      }
     } catch (error) {
       console.error("Login error:", error);
 
-      // Handle error message
       if (error.response) {
-        // Server responded with error
         setError(
           error.response.data.message || "Login failed. Please try again."
         );
       } else if (error.request) {
-        // Request made but no response
         setError("Network error. Please check your connection and try again.");
       } else {
-        // Something else happened
         setError("An unexpected error occurred. Please try again.");
       }
     } finally {
