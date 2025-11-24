@@ -4,7 +4,7 @@ import { authService } from "./auth";
 
 // Buat instance axios
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://192.168.1.148:3000/api", // Sesuaikan dengan backend URL kamu
+  baseURL: import.meta.env.VITE_API_URL || "http://192.168.1.249:3000/api",
   headers: {
     "Content-Type": "application/json",
   },
