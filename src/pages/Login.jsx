@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { authService } from "../utils/auth";
 import api from "../utils/axios";
 import "./Login.css";
+import { useTitle } from "../hooks/useTitle";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +12,8 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  // 🔥 Set dynamic title
+  useTitle("Login");
   // Redirect jika sudah login
   useEffect(() => {
     if (authService.isAuthenticated()) {

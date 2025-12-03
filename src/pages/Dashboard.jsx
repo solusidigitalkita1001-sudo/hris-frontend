@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 // import ApexCharts from "apexcharts";
 import ApexCharts from "react-apexcharts";
+import { useTitle } from "../hooks/useTitle";
 
 const Dashboard = () => {
+  useTitle('Dashboard')
   useEffect(() => {
     // Contoh membuat chart manual
     const chartOptions = {

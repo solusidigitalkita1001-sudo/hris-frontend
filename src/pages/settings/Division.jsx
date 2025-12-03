@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useTitle } from "../../hooks/useTitle";
 
 export const Division = () => (
   <>

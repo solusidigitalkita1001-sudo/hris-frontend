@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useTitle } from "../../hooks/useTitle";
 
 const Office = () => {
+  useTitle('Office')
   const [activeTab, setActiveTab] = useState('groups');
-
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
